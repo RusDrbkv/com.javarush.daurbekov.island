@@ -8,5 +8,5 @@ public class Config {
     public static final int STATS_UPDATE = 3000;
     public static final int MAX_PLANTS_IN_CELL = 50;
     public static final int DEFAULT_MAX_ANIMALS = 50;
-    public static final double PLANT_NUTRITION = 0.8;
+    //public static final double PLANT_NUTRITION = 0.8;
 }
