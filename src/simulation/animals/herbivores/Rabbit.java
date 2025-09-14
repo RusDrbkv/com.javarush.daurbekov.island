@@ -1,33 +1,33 @@
 package simulation.animals.herbivores;
 
-import simulation.Plant;
-
+import simulation.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Rabbit extends Herbivore {
+    public static int maxInCell = 30; // Уменьшили с 150 до 30
+    
     public Rabbit() {
-        super(2, 0.45, 2, 150, Map.of(Plant.class, 1.0));
+        super(2, 0.45, 2, maxInCell);
+    }
+    
+    public Rabbit(double weight, double maxSatiety, int speed, int maxInCell, boolean isBaby) {
+        super(weight, maxSatiety, speed, maxInCell, isBaby);
     }
 
     @Override
     public void reproduce() {
-        List<Rabbit> rabbits = location.getAnimals().stream()
-                .filter(a -> a instanceof Rabbit)
-                .map(a -> (Rabbit) a)
-                .collect(Collectors.toList());
+        if (location != null && canReproduce()) {
+            List<Rabbit> rabbits = location.getAnimals().stream()
+                    .filter(a -> a instanceof Rabbit)
+                    .map(a -> (Rabbit) a)
+                    .collect(Collectors.toList());
 
-        if (rabbits.size() >= 2 && location.canAddAnimal(Rabbit.class)) {
-            Rabbit baby = new Rabbit();
-            location.addAnimal(baby);
+            if (rabbits.size() >= 2 && location.canAddAnimal(Rabbit.class)) {
+                Rabbit baby = new Rabbit(2, 0.45, 2, maxInCell, true); // true = детеныш
+                // Используем Island.addAnimal() для проверки общего лимита
+                location.getIsland().addAnimal(baby, location.getX(), location.getY());
+            }
         }
-    }
-
-    @Override
-    public void move() {
-        int dx = random.nextInt(speed * 2 + 1) - speed;
-        int dy = random.nextInt(speed * 2 + 1) - speed;
-        location.moveAnimal(this, dx, dy);
     }
 }

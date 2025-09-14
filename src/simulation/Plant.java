@@ -1,8 +1,14 @@
 package simulation;
 
-public class Plant {
+public class Plant extends Creature {
     private int quantity;
-    private double nutritionValue = 0.5;
+    private double nutritionValue;
+
+    public Plant() {
+        super(0.0); // Растения не имеют веса как единицы
+        this.quantity = 0;
+        this.nutritionValue = Config.PLANT_NUTRITION;
+    }
 
     public void grow() {
         if (quantity < Config.MAX_PLANTS_IN_CELL) {
@@ -20,5 +26,10 @@ public class Plant {
 
     public double getNutritionValue() {
         return nutritionValue;
+    }
+    
+    @Override
+    public void eat(Creature food) {
+        // Растения не едят других существ
     }
 }

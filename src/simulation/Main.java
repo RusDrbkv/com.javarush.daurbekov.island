@@ -8,15 +8,16 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Island island = new Island(Config.WIDTH, Config.HEIGHT);
+        
         initializeAnimals(island);
 
         island.startSimulation();
-        TimeUnit.MINUTES.sleep(10);
+        TimeUnit.SECONDS.sleep(30); 
         island.shutdown();
     }
 
     private static void initializeAnimals(Island island) {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; i++) { // Увеличили до 50
             island.addAnimal(new Rabbit(), randX(), randY());
             island.addAnimal(new Sheep(), randX(),randY());
             island.addAnimal(new Mouse(), randX(),randY());

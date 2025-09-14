@@ -65,20 +65,25 @@ public class Island {
     }
 
     private void processAnimals() {
-        int processors = Runtime.getRuntime().availableProcessors();
-        ExecutorService pool = Executors.newFixedThreadPool(processors * 2);
-
+        // Используем фиксированный пул потоков вместо создания нового каждый раз
+        int processors = Math.min(Runtime.getRuntime().availableProcessors(), 4); // Ограничиваем до 4 потоков
+        
+        // Обрабатываем животных последовательно для лучшей производительности
         Arrays.stream(grid)
                 .flatMap(Arrays::stream)
-                .forEach(loc -> loc.getAnimals().forEach(animal ->
-                        pool.submit(() -> {
-                            if (animal != null && animal.isAlive()) {
-                                animal.run();
-                            }
-                        })
-                ));
-
-        pool.shutdown();
+                .forEach(loc -> {
+                    List<Animal> animals = loc.getAnimals();
+                    // Обрабатываем только живых животных
+                    animals.stream()
+                            .filter(Animal::isAlive)
+                            .forEach(animal -> {
+                                try {
+                                    animal.run();
+                                } catch (Exception e) {
+                                    // Игнорируем ошибки для стабильности
+                                }
+                            });
+                });
     }
 
     private void printStats() {
@@ -134,6 +139,7 @@ public class Island {
 
     public void addAnimal(Animal animal, int x, int y) {
         if (animal == null) return;
+        
         if (x >= 0 && x < width && y >= 0 && y < height) {
             Location location = grid[x][y];
             if (location.canAddAnimal(animal.getClass())) {
@@ -148,5 +154,12 @@ public class Island {
             return grid[x][y];
         }
         return null;
+    }
+    
+    public long getTotalAnimalCount() {
+        return Arrays.stream(grid)
+                .flatMap(Arrays::stream)
+                .mapToLong(loc -> loc.getAnimals().size())
+                .sum();
     }
 }

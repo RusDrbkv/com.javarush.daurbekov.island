@@ -1,34 +1,33 @@
 package simulation.animals.herbivores;
 
-import simulation.Plant;
-
+import simulation.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Duck extends Herbivore {
+    public static int maxInCell = 30; // Уменьшили с 200 до 30
+    
     public Duck() {
-        super(1, 0.15, 4, 200, Map.of(
-                Plant.class, 1.0,
-                Caterpillar.class, 0.9
-        ));
+        super(1, 0.15, 4, maxInCell);
+    }
+
+    public Duck(double weight, double maxSatiety, int speed, int maxInCell, boolean isBaby) {
+        super(weight, maxSatiety, speed, maxInCell, isBaby);
     }
 
     @Override
     public void reproduce() {
-        List<Duck> ducks = location.getAnimals().stream()
-                .filter(a -> a instanceof Duck)
-                .map(a -> (Duck) a)
-                .collect(Collectors.toList());
+        if (location != null && canReproduce()) {
+            List<Duck> ducks = location.getAnimals().stream()
+                    .filter(a -> a instanceof Duck)
+                    .map(a -> (Duck) a)
+                    .collect(Collectors.toList());
 
-        if (ducks.size() >= 2 && location.canAddAnimal(Duck.class)) {
-            Duck baby = new Duck();
-            location.addAnimal(baby);
+            if (ducks.size() >= 2 && location.canAddAnimal(Duck.class)) {
+                Duck baby = new Duck(1, 0.15, 4, maxInCell, true); // true = детеныш
+                // Используем Island.addAnimal() для проверки общего лимита
+                location.getIsland().addAnimal(baby, location.getX(), location.getY());
+            }
         }
-    }
-
-    @Override
-    public void move() {
-
     }
 }

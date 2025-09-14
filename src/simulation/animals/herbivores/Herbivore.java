@@ -1,27 +1,32 @@
 package simulation.animals.herbivores;
 
-import simulation.Plant;
+import simulation.*;
 import simulation.animals.Animal;
 
-import java.util.Map;
-
 public abstract class Herbivore extends Animal {
-    protected Map<Class<?>, Double> foodChances;
 
-    public Herbivore(double weight, double maxSatiety, int speed,
-                     int maxInCell, Map<Class<?>, Double> foodChances) {
+    public Herbivore(double weight, double maxSatiety, int speed, int maxInCell) {
         super(weight, maxSatiety, speed, maxInCell);
-        this.foodChances = foodChances;
+    }
+    
+    public Herbivore(double weight, double maxSatiety, int speed, int maxInCell, boolean isBaby) {
+        super(weight, maxSatiety, speed, maxInCell, isBaby);
     }
 
     @Override
     public void eat() {
-        if (foodChances.containsKey(Plant.class)) {
+        if (location != null) {
             Plant plant = location.getPlant();
-            if (plant.getQuantity() > 0 && random.nextDouble() < foodChances.get(Plant.class)) {
-                satiety = Math.min(satiety + plant.getNutritionValue(), maxSatiety);
-                plant.consume();
+            if (plant.getQuantity() > 0) {
+                eat(plant);
             }
         }
+    }
+
+    @Override
+    public void move() {
+        // Травоядные двигаются случайно
+        Direction direction = Direction.getRandomDirection();
+        move(direction);
     }
 }

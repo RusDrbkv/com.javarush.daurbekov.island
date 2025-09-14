@@ -42,6 +42,12 @@ public class Location {
     public void removeAnimal(Animal animal) {
         animals.remove(animal);
     }
+    
+    public void removeUnit(Unit unit) {
+        if (unit instanceof Animal) {
+            removeAnimal((Animal) unit);
+        }
+    }
 
     public void moveAnimal(Animal animal, int dx, int dy) {
         int newX = Math.max(0, Math.min(x + dx, Config.WIDTH - 1));
@@ -60,5 +66,17 @@ public class Location {
 
     public Plant getPlant() {
         return plant;
+    }
+    
+    public Island getIsland() {
+        return island;
+    }
+    
+    public int getX() {
+        return x;
+    }
+    
+    public int getY() {
+        return y;
     }
 }
